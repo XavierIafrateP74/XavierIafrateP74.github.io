@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function ChaoticRaccoonTimer() {
   const [time, setTime] = useState(300);
+  const [originalTime, setOriginalTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [chaos, setChaos] = useState(0);
   const [raccoons, setRaccoons] = useState([]);
@@ -15,11 +16,11 @@ export default function ChaoticRaccoonTimer() {
     if (isRunning && time > 0) {
       interval = setInterval(() => {
         setTime(t => t - 1);
-        setChaos(c => Math.min(c + 2, 100));
+        setChaos(time === 0 ? 100 : Math.ceil(((originalTime - time) / originalTime) * 100));
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isRunning, time]);
+  }, [isRunning, time, originalTime]);
 
   useEffect(() => {
     const glitchInterval = setInterval(() => {
@@ -44,7 +45,7 @@ export default function ChaoticRaccoonTimer() {
     
     // Add floating chaos text
     if (isRunning && Math.random() > 0.7) {
-      const texts = ['OOER', 'HELP', '🦝', 'OH NO', 'PLZ', 'GARLIC', 'SOCKS', '???', 'BEPIS', '!!!'];
+      const texts = ['[oO]', 'HELP', '🦝', 'OH NO', 'PLZ', 'GARLIC', 'SOCKS', '???', 'BEPIS', '!!!'];
       const newText = {
         id: Date.now() + Math.random(),
         text: texts[Math.floor(Math.random() * texts.length)],
@@ -299,7 +300,7 @@ export default function ChaoticRaccoonTimer() {
         zIndex: 10
       }}>
         {[60, 180, 300, 600].map(seconds => (
-          <button key={seconds} onClick={() => setTime(seconds)} style={{
+          <button key={seconds} onClick={() => {setTime(seconds); setOriginalTime(seconds);}} style={{
             fontSize: '1.2rem',
             padding: '10px 20px',
             background: '#000',
